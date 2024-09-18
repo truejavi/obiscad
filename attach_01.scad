@@ -10,10 +10,10 @@ module arm(debug=false)
   if (debug) {
     frame(l=10);
     connector(a);
+    echo(a);
   }
-
   //color("Brown",0.5)    //-- Debug: make the part transparent
-  color("Brown")
+  color("Brown",0.5)
   difference() {
     cube(asize,center=true);
 
@@ -31,8 +31,8 @@ size = [20,20,20];
 
 //-- Connectors
 //--     att. point     att. axis    roll
-c1 = [ [0,0,size[2]/2],  [0,0,1],     20 ];  //-- Top connector
-c2 = [ [-size[0]/2,0,0], [-1,0,0],    -30 ];   //-- Left connector
+c1 = [ [0,0,size[2]/2],  [0,0,1],     10 ];  //-- Top connector
+c2 = [ [-size[0]/2,0,0], [-1,0,0],    180 ];   //-- Left connector
 
 //-- Draw the cube and its connectos
 if (debug) {
@@ -50,13 +50,13 @@ asize = [10,40,3];
 
 //-- Connector
 //--    att. point                 att. axis  roll
-a = [ [0, asize[1]/2-3,-asize[2]/2], [0,0,1],   0  ];
+a = [ [0, asize[1]/2-3,-asize[2]/2], [-1,0,0],   0  ];
 
 //-- Draw the attachable part apart
 translate([40,0,0]) arm(debug);
 
 //------- Attach the parts! -------
-attach(c1,a) arm(debug);
+*attach(c1, a) arm(debug);
 attach(c2,a) arm(debug);
 
 
