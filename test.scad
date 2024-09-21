@@ -7,6 +7,9 @@ $vpd = 300;           // Distancia de la cámara
 // Ejemplo de objeto
 //cube([20, 10, 10]);
 
+
+
+
       //example polygon with multiple holes
 a0 = [[0,0],[100,0],[130,50],[30,50]];     // main
 b0 = [1,0,3,2];
@@ -26,3 +29,4 @@ linear_extrude(height=10)
 rotate([0,0,0]){
    polygon(a,[b0,b1,b2,b3,b4]);
    }
+
