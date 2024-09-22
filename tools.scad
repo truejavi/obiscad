@@ -1,7 +1,9 @@
 
 // Módulo para configurar la cámara
 //rotation=[50,0,25];
-rotation=[0,0,-80];
+rotation=[-135,35.264,30];
+//rotation=[0,0,0];
+
 traslation=[0,0,0];
 perspective=22.5;
 distance=100;
