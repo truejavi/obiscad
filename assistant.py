@@ -1,8 +1,6 @@
 import numpy as np
-def rotation2point(view_x,view_y):
-    #obtiene la rotacion adecuada para que el preview tenga como ejes locales view_x y view_y
+from scipy.spatial.transform import Rotation as R
 
-    pass
 
 
 def normalize(v):
@@ -10,26 +8,7 @@ def normalize(v):
     norm = np.linalg.norm(v)
     return v / norm
 
-def projection(a, b):
-    """
-    Calcula la proyección del vector a sobre el vector b.
-    
-    :param a: Vector a (numpy array)
-    :param b: Vector b (numpy array)
-    :return: Proyección del vector a sobre el vector b (numpy array)
-    """
-    # Producto escalar de a y b
-    dot_product = np.dot(a, b)
-    
-    # Magnitud de b al cuadrado (b · b)
-    b_magnitude_squared = np.dot(b, b)
-    
-    # Proyección de a sobre b
-    projection_ab = (dot_product / b_magnitude_squared) * b
-    
-    return projection_ab
-
-def generate_coordinate_system(p, segment_x_prime, invert=None):
+def generate_coordinate_system(segment_x_prime, p, invert):
 
     origin=np.array(segment_x_prime[0])
     end=np.array(segment_x_prime[1])
@@ -63,31 +42,6 @@ def calculate_rotation_matrix(original_axes, rotated_axes):
     
     return rotation_matrix
 
-
-out=(generate_coordinate_system([0,1,0],[[0,0,1],[1,0,0]],invert=True))
-#out=(generate_coordinate_system([1,1,0],[[0,0,0],[0,1,0]]))
-
-print("out=",out)
-
-# Ejemplo de uso
-original_axes = np.array([[1, 0, 0],  # Eje x original
-                          [0, 1, 0],  # Eje y original
-                          [0, 0, 1]]) # Eje z original
-
-
-rotated_axes = np.array([[0, -1, 0],  # Eje x rotado
-                         [1,  0, 0],  # Eje y rotado
-                         [0,  0, 1]]) # Eje z rotado
-
-rotated_axes = out[1]
-
-rotation_matrix = calculate_rotation_matrix(original_axes, rotated_axes)
-
-print("Matriz de rotación:")
-print(rotation_matrix)
-
-from scipy.spatial.transform import Rotation as R
-
 def rotation_matrix_to_euler_angles(rotation_matrix):
     """
     Convierte una matriz de rotación en ángulos de Euler (rotaciones sobre los ejes x, y, z).
@@ -98,11 +52,55 @@ def rotation_matrix_to_euler_angles(rotation_matrix):
     r = R.from_matrix(rotation_matrix)
     return r.as_euler('xyz', degrees=True)  # En grados
 
-# Convertir la matriz de rotación a ángulos de Euler
-euler_angles = rotation_matrix_to_euler_angles(rotation_matrix)
+def get_transform_x_axis_point_XY(x_axis_segment,point_xy,invert):
+    
+        
+    original_axes = np.array([[1, 0, 0], # Eje x original
+                             [0, 1, 0],  # Eje y original
+                             [0, 0, 1]]) # Eje z original
 
-print("Ángulos de Euler (en grados):", euler_angles)
+    origin,rotated_axes=(generate_coordinate_system(x_axis_segment,point_xy,invert))
 
 
+
+    rotation_matrix = calculate_rotation_matrix(rotated_axes,original_axes)
+
+
+
+    # Convertir la matriz de rotación a ángulos de Euler
+    euler_angles = rotation_matrix_to_euler_angles(rotation_matrix)
+
+    return origin , euler_angles
+
+def set_config_view(traslation=None,rotation=None,perspective=None,distance=None,file_path="view_config.scad"):
+
+    if (rotation is None) and (traslation is None) and (perspective is None) and (distance is None):
+        #default
+        traslation=[0,0,0]
+        rotation=[55,0,25]
+        perspective=22.5
+        distance=140
+
+    with open(file_path, 'r') as f:
+        lineas = f.readlines()
+
+
+    if (rotation     is  not None): lineas[1]=f'rotation={rotation};\n'
+    if (traslation   is  not None): lineas[2]=f'traslation={traslation};\n'
+    if (perspective  is  not None): lineas[3]=f'perspective={perspective};\n'
+    if (distance     is  not None): lineas[4]=f'distance={distance};\n'
+
+
+    # Escribir las líneas modificadas de nuevo en el archivo
+    with open(file_path, 'w') as f:
+        f.writelines(lineas)
+
+
+
+#TEST
+origin,rot=get_transform_x_axis_point_XY([[0,0,0],[5,5,10]],[10,0,0],invert=True)
+origin,rot=get_transform_x_axis_point_XY([[5,5,10],[0,0,0]],[10,0,0],invert=False)
+set_config_view(traslation=origin.tolist(), rotation=rot.tolist())
+#set_config_view()
 
 
