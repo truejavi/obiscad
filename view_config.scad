@@ -1,6 +1,6 @@
 // Modulo para configurar la cámara
-rotation=[55, 0, 25];
-traslation=[0, 0, 0];
+rotation=[-39.23152048359224, 54.735610317245346, -135.0];
+traslation=[5, 5, 10];
 perspective=22.5;
 distance=140;
 
